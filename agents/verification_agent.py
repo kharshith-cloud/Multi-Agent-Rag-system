@@ -14,7 +14,7 @@ class VerificationAgent:
             raise ValueError("GROQ_API_KEY environment variable is not set")
         
         self.llm = ChatGroq(
-            model_name="llama-3.1-8b-instant",
+            model_name="openai/gpt-oss-20b",
             temperature=0.0,
             max_tokens=512,
             groq_api_key=api_key,
