@@ -31,7 +31,7 @@ class RelevanceChecker:
 
         # Retrieve doc chunks from the ensemble retriever
         try:
-            top_docs = retriever.invoke(question)
+            top_docs = retriever.invoke(question, top_k=k)
         except Exception as e:
             logger.error(f"Error retrieving documents: {e}")
             return "NO_MATCH"

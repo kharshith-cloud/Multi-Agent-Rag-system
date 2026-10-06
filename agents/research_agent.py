@@ -27,10 +27,23 @@ class ResearchAgent:
         """
         return response_text.strip()
 
-    def generate_prompt(self, question: str, context: str) -> str:
+    def generate_prompt(self, question: str, context: str, previous_answer: str = "", verification_feedback: str = "") -> str:
         """
         Generate a structured prompt for the LLM to generate a precise and factual answer.
         """
+        feedback_section = ""
+        if verification_feedback:
+            feedback_section = f"""
+        **Previous Attempt:**
+        {previous_answer}
+
+        **Feedback / Unresolved Issues from Previous Attempt:**
+        {verification_feedback}
+
+        **Important Fix Instructions:**
+        Please correct the previous answer based on the feedback above. Ensure all claims are strictly supported by the available information below.
+        """
+
         prompt = f"""
         You are a helpful AI assistant that answers questions based on available information.
     
@@ -40,7 +53,7 @@ class ResearchAgent:
         - Be clear, concise, and factual.
         - Never mention "context", "documents", "provided information", or similar phrases.
         - Just give the answer naturally or say you don't know.
-        
+        {feedback_section}
         **Question:** {question}
         
         **Available information:**
@@ -50,7 +63,7 @@ class ResearchAgent:
         """
         return prompt
 
-    def generate(self, question: str, documents: List[Document]) -> Dict:
+    def generate(self, question: str, documents: List[Document], previous_answer: str = "", verification_feedback: str = "") -> Dict:
         """
         Generate an initial answer using the provided documents.
         """
@@ -68,7 +81,7 @@ class ResearchAgent:
         print(f"Combined context length: {len(context)} characters.")
 
         # Create a prompt for the LLM
-        prompt = self.generate_prompt(question, context)
+        prompt = self.generate_prompt(question, context, previous_answer=previous_answer, verification_feedback=verification_feedback)
         print("Prompt created for the LLM.")
 
         # Call the LLM to generate the answer

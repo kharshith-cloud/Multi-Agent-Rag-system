@@ -57,20 +57,26 @@ class LlamaIndexHybridRetriever:
         except Exception as e:
             raise RuntimeError(f"Failed to initialize retrievers: {e}")
 
-    def invoke(self, query: str, timeout: int = 30):
+    def invoke(self, query: str, top_k: int = None, timeout: int = 30):
         """
         Retrieve documents using hybrid approach (vector + BM25).
         Optimized for large indices with timeout protection.
         
         Args:
             query: The search query
+            top_k: Optional number of documents to retrieve (defaults to config.TOP_K if None)
             timeout: Maximum time in seconds (not enforced, just for documentation)
             
         Returns:
             List of LangChain Document objects
         """
+        k = top_k if top_k is not None else TOP_K
         try:
-            logger.debug(f"Retrieving documents for query: {query}")
+            logger.debug(f"Retrieving documents for query: {query} with top_k={k}")
+            
+            # Temporarily set similarity_top_k on both retrievers
+            self.vector.similarity_top_k = k
+            self.bm25.similarity_top_k = k
             
             # Retrieve from both retrievers
             vector_nodes = self.vector.retrieve(query)
@@ -94,8 +100,8 @@ class LlamaIndexHybridRetriever:
                 seen.add(node_id)
                 merged.append(n)
 
-        # Limit to TOP_K for efficiency
-        merged = merged[:TOP_K]
+        # Limit to k for efficiency
+        merged = merged[:k]
         
         logger.debug(f"Merged results: {len(merged)} unique nodes")
 

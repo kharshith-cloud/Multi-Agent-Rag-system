@@ -81,8 +81,7 @@ def ingest_pdfs(progress_callback=None):
             # Add remaining nodes in batches
             for i in range(BATCH_SIZE, total_nodes, BATCH_SIZE):
                 batch = nodes[i:i + BATCH_SIZE]
-                for node in batch:
-                    index.insert_nodes([node])
+                index.insert_nodes(batch)
                 
                 progress = 0.6 + (0.3 * (i / total_nodes))
                 if progress_callback:

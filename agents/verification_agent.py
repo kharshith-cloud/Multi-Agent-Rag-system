@@ -16,7 +16,7 @@ class VerificationAgent:
         self.llm = ChatGroq(
             model_name="llama-3.1-8b-instant",
             temperature=0.0,
-            max_tokens=200,
+            max_tokens=512,
             groq_api_key=api_key,
         )
         print("LLM initialized successfully.")

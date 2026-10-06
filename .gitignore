@@ -1,0 +1,32 @@
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Python virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+agents/__pycache__/
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project data directories (local uploads and vector index persistence)
+data/uploads/*
+!data/uploads/.gitkeep
+data/llamaindex/*
+!data/llamaindex/.gitkeep
+
+# System files
+.DS_Store
+Thumbs.db

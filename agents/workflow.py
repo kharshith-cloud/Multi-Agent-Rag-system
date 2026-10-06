@@ -186,10 +186,16 @@ class AgentWorkflow:
     def _research_step(self, state: AgentState) -> Dict:
         logger.info("Running research agent")
 
+        iteration_count = state.get("iteration_count", 0)
+        verification_report = state.get("verification_report", "")
+        previous_answer = state.get("draft_answer", "")
+
         try:
             result = self.researcher.generate(
                 question=state["question"],
-                documents=state["documents"]
+                documents=state["documents"],
+                previous_answer=previous_answer if iteration_count > 0 else "",
+                verification_feedback=verification_report if (iteration_count > 0 and verification_report) else ""
             )
         except Exception as e:
             logger.error(f"Error in research step: {e}")
@@ -198,11 +204,11 @@ class AgentWorkflow:
             }
 
         # Increment iteration count
-        iteration_count = state.get("iteration_count", 0) + 1
+        new_iteration_count = iteration_count + 1
 
         return {
             "draft_answer": result.get("draft_answer", ""),
-            "iteration_count": iteration_count
+            "iteration_count": new_iteration_count
         }
 
     # ---------------------------
